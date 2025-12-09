@@ -1,21 +1,75 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "composite": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": true,
+    "baseUrl": "./",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "importHelpers": true,
-    "isolatedModules": true,
-    "lib": ["es2022"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "noEmitOnError": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "target": "es2021",
+    "useUnknownInCatchVariables": true,
+    "lib": ["es2021"],
     "skipLibCheck": true,
-    "strict": true,
-    "target": "es2022",
-    "customConditions": ["@exodus/source"]
+    "skipDefaultLibCheck": true,
+    "preserveSymlinks": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "types": ["node"],
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+    // "paths": {
+    //   "@genesis/circuit-breaker": [
+    //     "packages/nestjs-circuit-breaker-module/src/index.ts"
+    //   ],
+    //   "@genesis/circuit-breaker/*": [
+    //     "packages/nestjs-circuit-breaker-module/src/*"
+    //   ],
+    //   "@genesis/decorators": ["packages/nestjs-decorators-module/src/index.ts"],
+    //   "@genesis/decorators/*": ["packages/nestjs-decorators-module/src/*"],
+    //   "@genesis/filters": ["packages/nestjs-filters-module/src/index.ts"],
+    //   "@genesis/filters/*": ["packages/nestjs-filters-module/src/*"],
+    //   "@genesis/interceptors": [
+    //     "packages/nestjs-interceptors-module/src/index.ts"
+    //   ],
+    //   "@genesis/interceptors/*": ["packages/nestjs-interceptors-module/src/*"],
+    //   "@genesis/config": ["packages/nestjs-config-module/src/index.ts"],
+    //   "@genesis/config/*": ["packages/nestjs-config-module/src/*"],
+    //   "@genesis/repository": ["packages/repository/src/index.ts"],
+    //   "@genesis/repository/*": ["packages/repository/src/*"],
+    //   "@genesis/rate-limiter": [
+    //     "packages/nestjs-rate-limiter-module/src/index.ts"
+    //   ],
+    //   "@genesis/rate-limiter/*": ["packages/nestjs-rate-limiter-module/src/*"],
+    //   "@genesis/redis": ["packages/nestjs-redis-module/src/index.ts"],
+    //   "@genesis/redis/*": ["packages/nestjs-redis-module/src/*"],
+    //   "@genesis/shared": ["packages/shared/src/index.ts"],
+    //   "@genesis/shared/*": ["packages/shared/src/*"],
+    //   "@genesis/types": ["packages/types/src/index.ts"],
+    //   "@genesis/types/*": ["packages/types/src/*"],
+    //   "@genesis/utils": ["packages/utils/src/index.ts"],
+    //   "@genesis/utils/*": ["packages/utils/src/*"],
+    //   "@genesis/postgresql-repository": [
+    //     "packages/postgresql-repository/src/index.ts"
+    //   ],
+    //   "@genesis/postgresql-repository/*": [
+    //     "packages/postgresql-repository/src/*"
+    //   ],
+    //   "@genesis/postgres": ["packages/nestjs-postgres-module/src/index.ts"],
+    //   "@genesis/postgres/*": ["packages/nestjs-postgres-module/src/*"],
+    //   "@genesis/async-event-module": [
+    //     "packages/async-event-module/src/index.ts"
+    //   ],
+    //   "@genesis/async-event-module/*": ["packages/async-event-module/src/*"],
+    //   "@genesis/idempotency/*": ["packages/idempotency/src/*"],
+    //   "@genesis/idempotency": ["packages/idempotency/src/index.ts"],
+    //   "@genesis/object-id": ["packages/object-id/src/index.ts"],
+    //   "@genesis/object-id/*": ["packages/object-id/src/*"]
+    // }
   }
 }

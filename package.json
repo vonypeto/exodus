@@ -4,13 +4,26 @@
   "license": "MIT",
   "scripts": {},
   "private": true,
-  "dependencies": {},
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "@nestjs/microservices": "^11.1.9",
+    "@nestjs/mongoose": "^11.0.3",
+    "@nestjs/platform-express": "^11.1.9"
+  },
   "devDependencies": {
     "@nx/js": "22.2.0",
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
+    "@types/node": "^24.10.2",
+    "fs": "0.0.1-security",
     "nx": "22.2.0",
+    "path": "^0.12.7",
     "prettier": "^2.6.2",
     "tslib": "^2.3.0",
     "typescript": "~5.9.2"

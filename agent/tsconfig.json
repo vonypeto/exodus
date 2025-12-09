@@ -1,14 +1,11 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compileOnSave": false,
-  "files": [],
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "allowJs": true,
     "useUnknownInCatchVariables": true,
-    "maxNodeModuleJsDepth": 10
+    "resolveJsonModule": true,
+    "types": ["node", "jest"]
   },
   "references": []
 }
