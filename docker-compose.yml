@@ -1,0 +1,126 @@
+services:
+  redpanda-1:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: redpanda-1
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=512M
+      - --node-id=1
+      - --check=false
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9092
+      - --rpc-addr=0.0.0.0:33145
+      - --advertise-rpc-addr=redpanda-1:33145
+      - --seeds=redpanda-1:33145,redpanda-2:33146,redpanda-3:33147
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+      - "33145:33145"
+    environment:
+      REDPANDA_AUTO_CREATE_TOPICS: "true"
+    volumes:
+      - redpanda-1-data:/var/lib/redpanda/data
+
+  redpanda-2:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: redpanda-2
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=512M
+      - --node-id=2
+      - --check=false
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9093
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9093
+      - --rpc-addr=0.0.0.0:33146
+      - --advertise-rpc-addr=redpanda-2:33146
+      - --seeds=redpanda-1:33145,redpanda-2:33146,redpanda-3:33147
+    ports:
+      - "9093:9093"
+      - "9645:9644"
+      - "33146:33146"
+    environment:
+      REDPANDA_AUTO_CREATE_TOPICS: "true"
+    volumes:
+      - redpanda-2-data:/var/lib/redpanda/data
+
+  redpanda-3:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: redpanda-3
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp=1
+      - --memory=512M
+      - --node-id=3
+      - --check=false
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9094
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9094
+      - --rpc-addr=0.0.0.0:33147
+      - --advertise-rpc-addr=redpanda-3:33147
+      - --seeds=redpanda-1:33145,redpanda-2:33146,redpanda-3:33147
+    ports:
+      - "9094:9094"
+      - "9646:9644"
+      - "33147:33147"
+    environment:
+      REDPANDA_AUTO_CREATE_TOPICS: "true"
+    volumes:
+      - redpanda-3-data:/var/lib/redpanda/data
+  redis:
+    image: redis:7-alpine
+    container_name: local-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+  postgres:
+    image: postgres:16-alpine
+    container_name: local-postgres
+    env_file:
+      - .env.postgres
+    environment:
+      # Defaults if not provided by env_file
+      POSTGRES_USER: ${POSTGRES_USER:-app_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
+      POSTGRES_DB: ${POSTGRES_DB:-app_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:4
+    container_name: local-adminer
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+volumes:
+  postgres_data:
+  redis_data:
+  redpanda-1-data:
+  redpanda-2-data:
+  redpanda-3-data:

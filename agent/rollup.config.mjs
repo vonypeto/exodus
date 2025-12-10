@@ -11,11 +11,9 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 
 const absolutePath = (relativePath) =>
-  fileURLToPath(new URL(`../${relativePath}`, import.meta.url));
+  fileURLToPath(new URL(relativePath, import.meta.url));
 
-const packageJson = JSON.parse(
-  fs.readFileSync(absolutePath('agent/package.json')).toString()
-);
+const packageJson = JSON.parse(fs.readFileSync(absolutePath('package.json')));
 
 function getInputs(filePaths) {
   const inputs = {};
@@ -83,7 +81,7 @@ function generatePackageJSON() {
         absolutePath('dist/agent/package.json'),
         JSON.stringify(
           {
-            name: '@genesis/agent',
+            name: '@exodus/agent',
             version: packageJson.version,
             main: 'agent/src/main.js',
             dependencies: externalDependencies,
@@ -97,7 +95,7 @@ function generatePackageJSON() {
 }
 
 export default {
-  input: getInputs(['agent/src/**/*.ts', 'packages/**/*.ts']),
+  input: getInputs(['src/**/*.ts', 'packages/**/*.ts']),
   output: {
     dir: './dist/agent',
     format: 'cjs',
@@ -134,7 +132,7 @@ export default {
       extensions: ['.ts', '.js', '.json'],
     }),
     swc3({
-      tsconfig: absolutePath('tsconfig.base.json'),
+      tsconfig: absolutePath('tsconfig.json'),
       jsc: {
         parser: {
           syntax: 'typescript',

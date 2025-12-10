@@ -2,9 +2,9 @@ import { ShutdownSignal } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app/app.module';
-
 import { writeFileSync } from 'fs';
 import path from 'path';
+import { AsyncModule } from './async/async-event.module';
 
 const SHUTDOWN_SIGNALS = [
   ShutdownSignal.SIGHUP,
@@ -33,36 +33,38 @@ async function bootstrap() {
     return;
   }
 
-  // if (MODE === 'async') {
-  //   const brokers = (process.env['KAFKA_BROKERS'] || 'localhost:9092')
-  //     .split(',')
-  //     .map((b) => b.trim())
-  //     .filter(Boolean);
+  if (MODE === 'async') {
+    const brokers = (
+      process.env['KAFKA_BROKERS'] ||
+      'localhost:9092,localhost:9093,localhost:9094'
+    )
+      .split(',')
+      .map((b) => b.trim())
+      .filter(Boolean);
 
-  //   const microservice =
-  //     await NestFactory.createMicroservice<MicroserviceOptions>(AsyncModule, {
-  //       transport: Transport.KAFKA,
-  //       options: {
-  //         client: { brokers },
-  //         consumer: {
-  //           groupId: `${
-  //             process.env['SERVICE_NAME'] || 'genesis'
-  //           }-${MODE}-consumer`,
-  //           allowAutoTopicCreation: true,
-  //         },
-  //       },
-  //     });
+    const microservice =
+      await NestFactory.createMicroservice<MicroserviceOptions>(AsyncModule, {
+        transport: Transport.KAFKA,
+        options: {
+          client: { brokers },
+          consumer: {
+            groupId: `${
+              process.env['SERVICE_NAME'] || 'genesis'
+            }-${MODE}-consumer`,
+            allowAutoTopicCreation: true,
+          },
+        },
+      });
 
-  //   microservice.enableShutdownHooks(SHUTDOWN_SIGNALS);
-  //   await microservice.listen();
-  //   try {
-  //     writeFileSync(path.resolve(process.cwd(), './health'), 'OK');
-  //   } catch {}
-  //   console.log(`✅ Kafka async microservice listening [${NODE_ENV}]`);
-  //   return;
-  // }
+    microservice.enableShutdownHooks(SHUTDOWN_SIGNALS);
+    await microservice.listen();
+    try {
+      writeFileSync(path.resolve(process.cwd(), './health'), 'OK');
+    } catch {}
+    console.log(`✅ Kafka async microservice listening [${NODE_ENV}]`);
+    return;
+  }
 
-  // default fallback: start HTTP app
   const app = await NestFactory.create(AppModule);
   app.enableShutdownHooks(SHUTDOWN_SIGNALS);
   const globalPrefix = 'api';

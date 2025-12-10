@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import Redlock from 'redlock';
 import { Joser } from '@scaleforge/joser';
-import { idempotency } from '@genesis/idempotency';
+import { idempotency } from '@exodus/idempotency';
 
 export function Idempotency(key: (...args: unknown[]) => string) {
   return function (_: unknown, __: string, descriptor: PropertyDescriptor) {

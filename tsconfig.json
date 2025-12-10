@@ -10,5 +10,9 @@
     "useUnknownInCatchVariables": true,
     "maxNodeModuleJsDepth": 10
   },
-  "references": []
+  "references": [
+    {
+      "path": "./packages/nestjs-config-module"
+    }
+  ]
 }

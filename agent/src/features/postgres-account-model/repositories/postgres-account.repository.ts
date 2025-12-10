@@ -1,6 +1,5 @@
-import { PostgresRepository } from '@genesis/postgresql-repository';
+import { PostgresRepository, Repository } from '@exodus/postgresql-repository';
 import { Pool } from 'pg';
-import { Repository } from '@genesis/repository';
 
 export enum AccountStatus {
   ACTIVE = 'active',

@@ -1,0 +1,15 @@
+{
+    "name": "@genesis/postgresql-repository",
+    "version": "0.0.1",
+    "type": "commonjs",
+    "main": "./src/index.ts",
+    "types": "./src/index.ts",
+    "dependencies": {
+        "pg": "^8.11.3",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/pg": "^8.11.0",
+        "@types/uuid": "^9.0.7"
+    }
+}

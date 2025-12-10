@@ -5,6 +5,12 @@ dist
 tmp
 out-tsc
 
+
+.env
+.env.development
+.env.production
+.next
+
 # dependencies
 node_modules
 

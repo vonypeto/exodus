@@ -1,0 +1,39 @@
+{
+  "name": "async-event-module-opexa"
+}
+  "sourceRoot": "packages/async-event-module/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["oxlint --fix --tsconfig=./tsconfig.json src/ tests/"],
+        "cwd": "packages/async-event-module"
+      }
+    },
+    "bundle": {
+      "executor": "@nx/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "main": "packages/async-event-module/src/index.ts",
+        "outputPath": "dist/packages/async-event-module",
+        "tsConfig": "packages/async-event-module/tsconfig.lib.json",
+        "project": "packages/async-event-module/package.json",
+        "assets": [
+          {
+            "input": "packages/async-event-module",
+            "glob": ".npmrc",
+            "output": "."
+          },
+          {
+            "input": "packages/async-event-module",
+            "glob": "README.md",
+            "output": "."
+          }
+        ],
+        "compiler": "tsc"
+      }
+    }
+  }
+}

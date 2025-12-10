@@ -1,0 +1,10 @@
+{
+  "name": "@genesis/object-id",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "dependencies": {
+    "bs58": "^5.0.0"
+  }
+}

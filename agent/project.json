@@ -1,5 +1,5 @@
 {
-  "name": "@genesis/agent",
+  "name": "@exodus/agent",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "agent/src",
   "projectType": "application",
@@ -10,8 +10,9 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/agent",
-        "commands": ["rollup -c agent/rollup.config.mjs"],
-        "parallel": false
+        "commands": ["rollup -c rollup.config.mjs"],
+        "parallel": false,
+        "cwd": "agent"
       }
     },
     "serve": {
@@ -51,7 +52,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "MODE=async KAFKA_BROKERS=localhost:9092 node dist/agent/agent/src/main.js",
+        "command": "MODE=async node dist/agent/agent/src/main.js",
         "color": true
       }
     },
@@ -90,7 +91,7 @@
     "dev:async": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "nodemon --watch src --ext ts,tsx --exec \"MODE=async KAFKA_BROKERS=localhost:9092 node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts\"",
+        "command": "nodemon --watch src --ext ts,tsx --exec \"MODE=async node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts\"",
         "color": true,
         "cwd": "agent"
       }

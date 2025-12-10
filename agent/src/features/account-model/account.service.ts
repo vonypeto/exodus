@@ -1,5 +1,4 @@
 import { Inject, Injectable, ConflictException } from '@nestjs/common';
-import { randomBytes } from 'crypto';
 import { Tokens } from './libs/tokens';
 import {
   Account,
@@ -7,7 +6,7 @@ import {
   AccountStatus,
   CreateAccountInput,
 } from './repositories/account.repository';
-import { ObjectId } from '@genesis/object-id';
+import { ObjectId } from '@exodus/object-id';
 
 @Injectable()
 export class AccountService {
@@ -16,37 +15,57 @@ export class AccountService {
     private accountRepository: AccountRepository
   ) {}
 
-  async create(input: CreateAccountInput): Promise<Account> {
-    const existingEmail = await this.accountRepository.findOne({
-      email: input.email,
-    });
+  async create(input: CreateAccountInput): Promise<boolean> {
+    console.log('Creating account', input);
+    const existingEmail = await this.accountRepository.find(
+      {
+        email: input.email,
+      },
+      { arr: false }
+    );
+    console.log(existingEmail);
+    console.log('Existing email check', existingEmail);
     if (existingEmail) {
+      console.log('true');
       throw new ConflictException('Email already exists');
     }
+    console.log('2');
 
-    const existingUsername = await this.accountRepository.findOne({
-      username: input.username,
-    });
+    const existingUsername = await this.accountRepository.find(
+      {
+        username: input.username,
+      },
+      { arr: false }
+    );
 
     if (existingUsername) {
       throw new ConflictException('Username already exists');
     }
-    const datas = ObjectId.generate();
-    console.log(datas.toString());
-    const data = await this.accountRepository.create({
+    console.log('3');
+    await this.accountRepository.create({
       ...input,
       status: input.status || AccountStatus.ACTIVE,
       isActive: true,
-      id: datas,
+      id: ObjectId.generate(),
       metadata: {},
     });
-    console.log(await this.accountRepository.findOne({ id: datas }));
-    return data;
+
+    return true;
   }
-  async findAll(page = 1, limit = 10): Promise<Account[]> {
-    return this.accountRepository.findAll(page, limit);
+  async findAll(params: {
+    page: number;
+    limit: number;
+    id?: ObjectId | string;
+  }): Promise<Account[] | Account> {
+    const { page, limit, id } = params;
+    const filter = id ? { id } : {};
+    return this.accountRepository.find(filter, {
+      skip: (page - 1) * limit,
+      limit,
+      arr: true,
+    });
   }
   async findById(id: ObjectId | Buffer) {
-    return this.accountRepository.findOne({ id: id });
+    return this.accountRepository.find({ id: id });
   }
 }

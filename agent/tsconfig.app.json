@@ -14,5 +14,21 @@
     "src/**/*.legacy.ts"
   ],
   "include": ["src/**/*.ts"],
-  "references": []
+  "references": [
+    {
+      "path": "../packages/postgresql-repository/tsconfig.lib.json"
+    },
+    {
+      "path": "../packages/repository/tsconfig.lib.json"
+    },
+    {
+      "path": "../packages/idempotency"
+    },
+    {
+      "path": "../packages/object-id/tsconfig.lib.json"
+    },
+    {
+      "path": "../packages/nestjs-config-module/tsconfig.lib.json"
+    }
+  ]
 }

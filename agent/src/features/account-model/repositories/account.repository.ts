@@ -1,5 +1,5 @@
-import { ObjectId } from '@genesis/object-id';
-import { MongooseRepository, Repository } from '@genesis/repository';
+import { ObjectId } from '@exodus/object-id';
+import { MongooseRepository, Repository } from '@exodus/repository';
 import { Connection, Schema } from 'mongoose';
 
 export enum AccountStatus {
@@ -42,9 +42,9 @@ export function AccountRepositoryFactory(
     'Account',
     {
       _id: Buffer,
-      email: { type: String, required: true },
-      username: { type: String, required: true },
-      password: { type: String, required: true },
+      email: { type: String },
+      username: { type: String },
+      password: { type: String },
       status: {
         type: String,
         enum: Object.values(AccountStatus),

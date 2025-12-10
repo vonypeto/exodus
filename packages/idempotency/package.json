@@ -1,0 +1,13 @@
+{
+  "name": "@highoutputventures/opexa-idempotency",
+  "version": "0.1.2",
+  "type": "commonjs",
+  "dependencies": {
+    "ioredis": "5.4.1",
+    "@scaleforge/joser": "0.5.1",
+    "redlock": "5.0.0-beta.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}
