@@ -84,10 +84,14 @@ export class AccountController {
   async findAll(
     @Query() query: { page?: string; limit?: string; id?: string }
   ): Promise<Account[] | Account> {
+    const filter: any = {};
+    if (query.id) {
+      filter.id = ObjectId.from(query.id);
+    }
     return this.accountService.findAll({
       page: query.page ? parseInt(query.page, 10) : 1,
       limit: parseInt(query.limit, 10) ? parseInt(query.limit, 10) : 10,
-      filter: { id: ObjectId.from(query.id) },
+      filter,
     });
   }
 }

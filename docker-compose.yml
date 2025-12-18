@@ -118,9 +118,20 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: postgres
 
+  mongodb:
+    image: mongo:7
+    container_name: local-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: app_db
+
 volumes:
   postgres_data:
   redis_data:
   redpanda-1-data:
   redpanda-2-data:
   redpanda-3-data:
+  mongodb_data:
