@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { AsyncEventHandler } from '@exodus/async-event-module';
 import { AccountService } from '../features/account-model/account.service';
 import { MemberAccountCreatedAsyncEvent } from '@exodus/async-event-module/types';
+import { ObjectId } from '@exodus/object-id';
 
 @Injectable()
 export class MemberAccountAsyncEventService {
@@ -19,6 +20,7 @@ export class MemberAccountAsyncEventService {
     // Uncommented: actually create account to test deduplication
     await this.account.create({
       ...event.payload,
+      id: ObjectId.from(event.id),
     });
   }
 }

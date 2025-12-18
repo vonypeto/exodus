@@ -5,6 +5,32 @@ import { AppModule } from './app/app.module';
 import { writeFileSync } from 'fs';
 import path from 'path';
 import { AsyncModule } from './async/async-event.module';
+import { program } from 'commander';
+import { AccountProjectionModule } from './projections/account-projection/account.projection';
+
+// CLI options, similar to Opexa
+program
+  .option('-m, --mode <mode>', 'app | projection | async', 'app')
+  .option(
+    '-p, --projections <projections...>',
+    'projections to start (comma or space separated)',
+    ''
+  )
+  .version('0.1.0');
+
+program.exitOverride();
+
+let options;
+try {
+  program.parse(global.argv || process.argv);
+  options = program.opts();
+} catch (error) {
+  // fallback to env vars if CLI fails
+  options = {
+    mode: process.env['MODE'] || 'app',
+    projections: process.env['PROJECTION'] ? [process.env['PROJECTION']] : [],
+  };
+}
 
 const SHUTDOWN_SIGNALS = [
   ShutdownSignal.SIGHUP,
@@ -13,23 +39,51 @@ const SHUTDOWN_SIGNALS = [
 ];
 
 async function bootstrap() {
-  const MODE = process.env['MODE'] || 'app';
+  const MODE = options.mode || 'app';
   const NODE_ENV = process.env['NODE_ENV'] || 'development';
 
   if (MODE === 'app') {
     const app = await NestFactory.create(AppModule);
     app.enableShutdownHooks(SHUTDOWN_SIGNALS);
-    const globalPrefix = 'api';
-    app.setGlobalPrefix(globalPrefix);
+    // const globalPrefix = 'api';
+    // app.setGlobalPrefix(globalPrefix);
+
     const port = parseInt(process.env['PORT'] || '3000', 10);
     await app.listen(port);
-    // health indicator
     try {
       writeFileSync(path.resolve(process.cwd(), './health'), 'OK');
     } catch {}
     console.log(
-      `🚀 Application is running on: http://localhost:${port}/${globalPrefix} [${NODE_ENV}]`
+      `🚀 Application is running on: http://localhost:${port}/ [${NODE_ENV}]`
     );
+    return;
+  }
+
+  if (MODE === 'projection') {
+    const modules = [];
+
+    if (options.projections.includes('account')) {
+      modules.push(['account', AccountProjectionModule]);
+    }
+
+    await Promise.all(
+      modules.map(async ([id, module]) => {
+        const ctx = await NestFactory.createApplicationContext(module);
+
+        ctx.enableShutdownHooks(SHUTDOWN_SIGNALS);
+
+        await ctx.init();
+
+        console.info('service started', {
+          mode: options.mode,
+          environment: NODE_ENV,
+          projection: id,
+        });
+      })
+    );
+
+    writeFileSync(path.resolve(process.cwd(), './health'), 'OK');
+
     return;
   }
 

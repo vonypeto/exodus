@@ -1,0 +1,11 @@
+table Event {
+  id:[ubyte];
+  type:ushort;
+  aggregate_id:[ubyte];
+  aggregate_version:uint;
+  body:[ubyte];
+  meta:[ubyte];
+  timestamp:uint;
+}
+
+root_type Event;

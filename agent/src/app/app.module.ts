@@ -5,7 +5,7 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AccountController } from './controllers/account.controller';
 import { AccountModule } from '../features/account-model/account.module';
-
+import { ArqueModule } from '@exodus/nestjs-arque-module';
 import Redis from 'ioredis';
 import Redlock from 'redlock';
 import R from 'ramda';
@@ -13,16 +13,72 @@ import { Joser } from '@scaleforge/joser';
 import { Tokens } from '../libs/tokens';
 import { AsyncEventDispatcherModule } from '@exodus/async-event-module';
 import { ObjectIdInterceptor } from './interceptor/deserializer';
+import {
+  ArqueKafkaStreamAdapterSerializers,
+  ArqueMongoStoreAdapterSerializers,ArquePostgresStoreAdapterSerializers
+} from '../libs/serializers';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     AccountModule,
+
+    ArqueModule.forRootAsync({
+      useFactory: async (config: ConfigService) => {
+        return {
+          config: {
+            mongo: {
+              uri: config.getString('EVENT_STORE_MONGODB_URI'),
+              maxPoolSize: config.getNumber(
+                'ARQUE_CONFIG_MONGO_MAX_POOL_SIZE',
+                { optional: true }
+              ),
+            },
+            postgres: {
+              uri: config.getString('EVENT_STORE_POSTGRESQL_URI', {
+                optional: true,
+              }),
+              maxPoolSize: config.getNumber('ARQUE_CONFIG_POSTGRES_POOL_SIZE', {
+                optional: true,
+              }),
+            },
+          },
+          store: {
+            mongo: {
+              uri: config.getString('EVENT_STORE_MONGODB_URI'),
+              serializers: ArqueMongoStoreAdapterSerializers,
+              maxPoolSize: config.getNumber('ARQUE_STORE_MONGO_MAX_POOL_SIZE', {
+                optional: true,
+              }),
+            },
+            postgres: {
+              uri: config.getString('EVENT_STORE_POSTGRESQL_URI', {
+                optional: true,
+              }),
+              maxPoolSize: config.getNumber('ARQUE_STORE_POSTGRES_POOL_SIZE', {
+                optional: true,
+              }),
+            serializers: ArquePostgresStoreAdapterSerializers, 
+            },
+          },
+          stream: {
+            kafka: {
+              brokers: config.getString('KAFKA_BROKERS').split(','),
+              serializers: ArqueKafkaStreamAdapterSerializers,
+              prefix: 'exodus',
+              minBytes:
+                config.getString('NODE_ENV') === 'production' ? 1024 : 1,
+            },
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
     AsyncEventDispatcherModule.forRootAsync({
       useFactory: (...args: unknown[]) => {
         const config = args[0] as ConfigService;
         return {
-          id: 'genesis-app',
+          id: 'exodus-app',
           kafka: {
             brokers: config.getString('KAFKA_BROKERS').split(','),
             transactionTimeout: 100,

@@ -1,0 +1,8 @@
+{
+  "projections": [
+    {
+      "name": "account",
+      "module": "./src/projections/account-projection/account.projection"
+    }
+  ]
+}

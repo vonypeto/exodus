@@ -1,0 +1,20 @@
+{
+  "name": "@exodus/nestjs-arque-module",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc -b tsconfig.build.json",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "dependencies": {
+    "@exodus/arque": "workspace:*",
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9"
+  },
+  "devDependencies": {
+     "typescript": "^5.3.3"
+  }
+}

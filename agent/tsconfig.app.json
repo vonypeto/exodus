@@ -22,10 +22,19 @@
       "path": "../packages/repository/tsconfig.lib.json"
     },
     {
+      "path": "../packages/arque/tsconfig.lib.json"
+    },
+    {
       "path": "../packages/idempotency"
     },
     {
+      "path": "../packages/common"
+    },
+    {
       "path": "../packages/object-id/tsconfig.lib.json"
+    },
+    {
+      "path": "../packages/nestjs-arque-module"
     },
     {
       "path": "../packages/nestjs-config-module/tsconfig.lib.json"

@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "useUnknownInCatchVariables": true,
+    "resolveJsonModule": true,
+    "types": ["node", "jest"]
+  },
+  "references": [
+    {
+      "path": "../packages/nestjs-config-module"
+    }
+  ]
+}

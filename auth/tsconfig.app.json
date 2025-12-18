@@ -1,0 +1,34 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "module": "commonjs",
+    "types": ["node"],
+    "emitDecoratorMetadata": true,
+    "target": "es2021"
+  },
+  "exclude": [
+    "jest.config.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "src/**/*.legacy.ts"
+  ],
+  "include": ["src/**/*.ts"],
+  "references": [
+    {
+      "path": "../packages/postgresql-repository/tsconfig.lib.json"
+    },
+    {
+      "path": "../packages/repository/tsconfig.lib.json"
+    },
+    {
+      "path": "../packages/idempotency"
+    },
+    {
+      "path": "../packages/object-id/tsconfig.lib.json"
+    },
+    {
+      "path": "../packages/nestjs-config-module/tsconfig.lib.json"
+    }
+  ]
+}

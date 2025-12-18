@@ -1,4 +1,4 @@
-import { AccountStatus } from '../../features/account-model/repositories/account.repository';
+import { AccountStatus, AccountType } from '@exodus/common';
 import {
   IsEmail,
   IsEnum,
@@ -34,6 +34,11 @@ export class CreateAccountDto {
   @IsString()
   @IsOptional()
   lastName?: string;
+
+  @IsEnum(AccountType)
+  @IsString()
+  @IsOptional()
+  type?: AccountType;
 
   @IsString()
   @IsOptional()

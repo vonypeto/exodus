@@ -83,7 +83,15 @@
     "dev:app": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "nodemon --watch src --ext ts,tsx --exec \"MODE=app node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts\"",
+        "command": "nodemon --watch src --ext ts,tsx --exec \"node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts --mode app\"",
+        "color": true,
+        "cwd": "agent"
+      }
+    },
+    "dev:projection": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nodemon --watch src --ext ts,tsx --exec \"node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts --mode projection --projections account\"",
         "color": true,
         "cwd": "agent"
       }
@@ -91,9 +99,17 @@
     "dev:async": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "nodemon --watch src --ext ts,tsx --exec \"MODE=async node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts\"",
+        "command": "nodemon --watch src --ext ts,tsx --exec \"node -r ts-node/register/transpile-only -r tsconfig-paths/register src/main.ts --mode async\"",
         "color": true,
         "cwd": "agent"
+      }
+    },
+    "projection": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node dist/agent/agent/src/main.js --mode projection --projections account",
+        "color": true
       }
     },
     "lint": {

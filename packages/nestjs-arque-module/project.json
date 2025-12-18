@@ -1,0 +1,16 @@
+{
+  "name": "nestjs-arque-module",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/nestjs-arque-module/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["oxlint --fix --tsconfig=./tsconfig.json src/"],
+        "cwd": "libs/nestjs-arque-module"
+      }
+    }
+  }
+}

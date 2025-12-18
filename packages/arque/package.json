@@ -1,0 +1,39 @@
+{
+  "name": "@exodus/arque",
+  "version": "0.11.4",
+  "description": "Unified Arque library for Exodus",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc -b tsconfig.build.json",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.1.9",
+    "@nestjs/core": "^11.1.9",
+    "@scaleforge/joser": "^0.8.8",
+    "async-mutex": "0.5.0",
+    "bs58": "6.0.0",
+    "debug": "4.4.1",
+    "exponential-backoff": "3.1.2",
+    "flatbuffers": "24.3.25",
+    "kafkajs": "2.2.4",
+    "lru-cache": "10.2.2",
+    "mongoose": "8.15.1",
+    "nestjs-config-module": "workspace:*",
+    "ohash": "1.1.4",
+    "p-queue": "^6.6.2",
+    "pg": "^8.11.3",
+    "ts-pattern": "^5.0.6"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.8",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.10.0",
+    "@types/pg": "^8.10.9",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.3.3"
+  }
+}

@@ -15,7 +15,6 @@ import { Request } from 'express';
 import { Inject } from '@nestjs/common';
 import { AccountService } from '../../features/account-model/account.service';
 import { Account } from '../../features/account-model/repositories/account.repository';
-import { CreateAccountDto } from '../../libs/dtos';
 import { AsyncEventDispatcherService } from '@exodus/async-event-module';
 import R from 'ramda';
 import { Buffer } from 'buffer';
@@ -29,6 +28,7 @@ import { Tokens } from '../../libs/tokens';
 import { AppRequest } from '../../libs/types';
 import { ObjectId } from '@exodus/object-id';
 import { Console } from 'console';
+import { CreateAccountDto } from '../dto/create-account.dto';
 
 @Controller('accounts')
 export class AccountController {
@@ -69,6 +69,17 @@ export class AccountController {
     return true;
   }
 
+  @Post('projection')
+  // @Idempotency((input: CreateAccountDto) => <string>input['email'])
+  async createProjection(@Body() input: CreateAccountDto): Promise<boolean> {
+    await this.accountService.createMemberAccount({
+      ...input,
+      id: ObjectId.generate(),
+    });
+    console.log('Created via projection');
+    return true;
+  }
+
   @Get()
   async findAll(
     @Query() query: { page?: string; limit?: string; id?: string }
@@ -76,7 +87,7 @@ export class AccountController {
     return this.accountService.findAll({
       page: query.page ? parseInt(query.page, 10) : 1,
       limit: parseInt(query.limit, 10) ? parseInt(query.limit, 10) : 10,
-      id: query.id,
+      filter: { id: ObjectId.from(query.id) },
     });
   }
 }

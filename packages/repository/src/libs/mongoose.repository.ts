@@ -315,25 +315,28 @@ export class MongooseRepository<T> implements Repository<T> {
   }
 
   private prepareData(data: Partial<T>): Partial<T> {
-    // Recursively convert string ObjectIds to Buffer for deserialization
+    // Only convert ObjectId instances and Buffers, NOT all strings
     const convertToObjectIds = (value: any): any => {
-      if (typeof value === 'string') {
-        try {
-          return ObjectId.from(value).buffer;
-        } catch (_) {
-          return value;
-        }
+      if (value instanceof ObjectId) {
+        // Handle ObjectId instances directly
+        return value.buffer;
       }
-      if (value && typeof value === 'object') {
-        if (Array.isArray(value)) {
-          return value.map(convertToObjectIds);
-        }
-        // For plain objects
+      if (value instanceof Buffer) {
+        // Already a Buffer, return as-is
+        return value;
+      }
+      // Don't convert strings - they should remain as strings
+      // Only the 'id' field gets special handling below
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        // For plain objects, recursively process
         const result: any = {};
         for (const key of Object.keys(value)) {
           result[key] = convertToObjectIds(value[key]);
         }
         return result;
+      }
+      if (Array.isArray(value)) {
+        return value.map(convertToObjectIds);
       }
       return value;
     };
@@ -344,7 +347,7 @@ export class MongooseRepository<T> implements Repository<T> {
       delete payload.id;
       payload._id = normalized;
     }
-    // Recursively convert all string ObjectIds in the payload
+    // Only convert ObjectId instances and Buffers, not regular strings
     return convertToObjectIds(payload) as Partial<T>;
   }
 }

@@ -71,7 +71,15 @@
       "@exodus/object-id": ["packages/object-id/src/index.ts"],
       "@exodus/object-id/*": ["packages/object-id/src/*"],
       "@exodus/joser": ["packages/joser/src/index.ts"],
-      "@exodus/joser/*": ["packages/joser/src/*"]
+      "@exodus/joser/*": ["packages/joser/src/*"],
+      "@exodus/arque": ["packages/arque/src/index.ts"],
+      "@exodus/arque/*": ["packages/arque/src/*"],
+      "@exodus/nestjs-arque-module": [
+        "packages/nestjs-arque-module/src/index.ts"
+      ],
+      "@exodus/nestjs-arque-module/*": ["packages/nestjs-arque-module/src/*"],
+      "@exodus/common": ["packages/common/src/index.ts"],
+      "@exodus/common/*": ["packages/common/src/*"]
     }
   }
 }

@@ -1,13 +1,7 @@
 import { ObjectId } from '@exodus/object-id';
 import { MongooseRepository, Repository } from '@exodus/repository';
 import { Connection, Schema } from 'mongoose';
-
-export enum AccountStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  SUSPENDED = 'suspended',
-  PENDING = 'pending',
-}
+import { AccountStatus, AccountType } from '@exodus/common';
 
 export type Account = {
   id: ObjectId;
@@ -18,6 +12,7 @@ export type Account = {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  type?: AccountType;
   lastLoginAt?: Date;
   isActive: boolean;
   metadata: Record<string, unknown>;
@@ -27,7 +22,7 @@ export type Account = {
 
 export type CreateAccountInput = Omit<
   Account,
-  'id' | 'isActive' | 'metadata' | 'createdAt' | 'updatedAt' | 'status'
+  'isActive' | 'metadata' | 'createdAt' | 'updatedAt' | 'status'
 > & {
   status?: AccountStatus;
 };
@@ -45,6 +40,7 @@ export function AccountRepositoryFactory(
       email: { type: String },
       username: { type: String },
       password: { type: String },
+      type: String,
       status: {
         type: String,
         enum: Object.values(AccountStatus),
