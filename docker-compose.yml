@@ -13,12 +13,12 @@ services:
       - --set redpanda.enable_transactions=true
       - --set redpanda.enable_idempotence=true
       - --kafka-addr=PLAINTEXT://0.0.0.0:9092
-      - --advertise-kafka-addr=PLAINTEXT://localhost:9092
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9192
       - --rpc-addr=0.0.0.0:33145
       - --advertise-rpc-addr=redpanda-1:33145
       - --seeds=redpanda-1:33145,redpanda-2:33146,redpanda-3:33147
     ports:
-      - "9092:9092"
+      - "9192:9092"
       - "9644:9644"
       - "33145:33145"
     environment:
@@ -40,12 +40,12 @@ services:
       - --set redpanda.enable_transactions=true
       - --set redpanda.enable_idempotence=true
       - --kafka-addr=PLAINTEXT://0.0.0.0:9093
-      - --advertise-kafka-addr=PLAINTEXT://localhost:9093
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9193
       - --rpc-addr=0.0.0.0:33146
       - --advertise-rpc-addr=redpanda-2:33146
       - --seeds=redpanda-1:33145,redpanda-2:33146,redpanda-3:33147
     ports:
-      - "9093:9093"
+      - "9193:9093"
       - "9645:9644"
       - "33146:33146"
     environment:
@@ -67,12 +67,12 @@ services:
       - --set redpanda.enable_transactions=true
       - --set redpanda.enable_idempotence=true
       - --kafka-addr=PLAINTEXT://0.0.0.0:9094
-      - --advertise-kafka-addr=PLAINTEXT://localhost:9094
+      - --advertise-kafka-addr=PLAINTEXT://localhost:9194
       - --rpc-addr=0.0.0.0:33147
       - --advertise-rpc-addr=redpanda-3:33147
       - --seeds=redpanda-1:33145,redpanda-2:33146,redpanda-3:33147
     ports:
-      - "9094:9094"
+      - "9194:9094"
       - "9646:9644"
       - "33147:33147"
     environment:
@@ -83,7 +83,7 @@ services:
     image: redis:7-alpine
     container_name: local-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     volumes:
       - redis_data:/data
     command: ["redis-server", "--save", "", "--appendonly", "no"]
@@ -98,7 +98,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
       POSTGRES_DB: ${POSTGRES_DB:-app_db}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -122,11 +122,39 @@ services:
     image: mongo:7
     container_name: local-mongodb
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - mongodb_data:/data/db
     environment:
       MONGO_INITDB_DATABASE: app_db
+
+  agent:
+    image: exodus/agent:latest
+    container_name: exodus-agent
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_started
+      redpanda-1:
+        condition: service_started
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=development
+      - PORT=80
+      - MODE=app
+      - KAFKA_BROKERS=redpanda-1:9092,redpanda-2:9093,redpanda-3:9094
+      - EVENT_STORE_MONGODB_URI=mongodb://mongodb:27017/event_store
+      - EVENT_STORE_POSTGRESQL_URI=postgresql://app_user:app_password@postgres:5432/event_store
+      - AGENT_MONGODB_URI=mongodb://mongodb:27017/agent_db
+      - REDIS_ENDPOINT=redis:6379
+      - DATA_REDIS_ENDPOINT=redis:6379
+      - REDLOCK_REDIS_ENDPOINTS=redis:6379
+    volumes:
+      - ./health:/home/node/app/health
 
 volumes:
   postgres_data:

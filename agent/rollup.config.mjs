@@ -13,7 +13,7 @@ import path from 'path';
 const absolutePath = (relativePath) =>
   fileURLToPath(new URL(relativePath, import.meta.url));
 
-const packageJson = JSON.parse(fs.readFileSync(absolutePath('package.json')));
+const packageJson = JSON.parse(fs.readFileSync(absolutePath('../package.json')));
 
 function getInputs(filePaths) {
   const inputs = {};
@@ -40,64 +40,45 @@ function getInputs(filePaths) {
 function generatePackageJSON() {
   return {
     name: 'generate-package-json',
-    generateBundle: async (_, bundles) => {
-      const dependencies = Object.entries(packageJson.dependencies || {});
-
-      const externalDependencies = {
-        '@swc/helpers': packageJson.dependencies?.['@swc/helpers'] || '^0.5.15',
+    generateBundle: async () => {
+      const allDeps = {
+        ...packageJson.dependencies,
+        ...packageJson.devDependencies,
       };
 
-      const matcher1 = new RegExp(/(require).*/g);
-      const matcher2 = new RegExp(/(?!require\(")[^"][^"]+(?="\))/g);
-
-      const importDependency = Object.values(bundles).flatMap(
-        ({ code }) => code.match(matcher1) || []
-      );
-
-      const imports =
-        importDependency
-          .join('')
-          .match(matcher2)
-          ?.filter(
-            (value) =>
-              !value.startsWith('.') && !value.startsWith('@swc/helpers')
-          )
-          .join(',') || '';
-
-      const importDependencies = dependencies
-        .map(([name, version]) => {
-          if (imports.match(new RegExp(name))) {
-            return [name, version];
-          }
-        })
-        .filter((value) => value !== undefined);
-
-      Object.assign(
-        externalDependencies,
-        Object.fromEntries(importDependencies)
+      const productionDependencies = Object.fromEntries(
+        Object.entries(allDeps).filter(
+          ([_, version]) => version && !version.includes('workspace:')
+        )
       );
 
       await writeFile(
-        absolutePath('dist/agent/package.json'),
+        absolutePath('../dist/agent/package.json'),
         JSON.stringify(
           {
             name: '@exodus/agent',
             version: packageJson.version,
-            main: 'agent/src/main.js',
-            dependencies: externalDependencies,
+            main: 'src/main.js',
+            dependencies: productionDependencies,
+            packageManager: packageJson.packageManager,
+            pnpm: packageJson.pnpm,
           },
           null,
-          2
-        )
+          2,
+        ),
       );
     },
   };
 }
 
+const externalDependencies = Object.entries(
+  packageJson.dependencies || {}
+).filter(([_, version]) => !version.includes('workspace:'));
+
 export default {
   input: getInputs(['src/**/*.ts', 'packages/**/*.ts']),
   output: {
-    dir: './dist/agent',
+    dir: absolutePath('../dist/agent'),
     format: 'cjs',
     preserveModules: false,
   },
@@ -105,20 +86,10 @@ export default {
     moduleSideEffects: true,
   },
   external: [
+    ...externalDependencies.map(([name]) => name),
     /node_modules/,
-    'mongoose',
-    'ioredis',
-    'bcrypt',
-    'yamljs',
-    'rate-limiter-flexible',
-    'bottleneck',
-    '@nestjs/swagger',
-    'mock-aws-s3',
-    'aws-sdk',
-    'nock',
     '@nestjs/microservices/microservices-module',
     '@nestjs/websockets/socket-module',
-    '@nestjs/microservices',
   ],
   plugins: [
     replace({
@@ -165,11 +136,15 @@ export default {
       targets: [
         {
           src: absolutePath('pnpm-lock.yaml'),
-          dest: './dist/agent',
+          dest: absolutePath('../dist/agent'),
         },
         {
-          src: absolutePath('agent/src/assets/**/*'),
-          dest: './dist/agent/agent/src/assets',
+          src: absolutePath('src/assets/**/*'),
+          dest: absolutePath('../dist/agent/src/assets'),
+        },
+        {
+          src: absolutePath('Dockerfile'),
+          dest: absolutePath('../dist/agent'),
         },
       ],
       copySync: true,

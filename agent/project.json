@@ -9,7 +9,7 @@
       "executor": "nx:run-commands",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/agent",
+        "outputPath": "dist",
         "commands": ["rollup -c rollup.config.mjs"],
         "parallel": false,
         "cwd": "agent"
@@ -20,15 +20,15 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "command": "node dist/agent/agent/src/main.js",
+        "command": "node dist/agent/src/main.js",
         "color": true
       },
       "configurations": {
         "development": {
-          "command": "node --watch dist/agent/agent/src/main.js"
+          "command": "node --watch dist/agent/src/main.js"
         },
         "production": {
-          "command": "node dist/agent/agent/src/main.js"
+          "command": "node dist/agent/src/main.js"
         }
       }
     },
@@ -36,7 +36,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "MODE=app node dist/agent/agent/src/main.js",
+        "command": "MODE=app node dist/agent/src/main.js",
         "color": true
       }
     },
@@ -44,7 +44,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "MODE=asyncevent node dist/agent/agent/src/main.js",
+        "command": "MODE=asyncevent node dist/agent/src/main.js",
         "color": true
       }
     },
@@ -52,15 +52,15 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "MODE=async node dist/agent/agent/src/main.js",
+        "command": "MODE=async node dist/agent/src/main.js",
         "color": true
       }
     },
     "infra:up": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose up -d redpanda redis",
-        "cwd": "genesis",
+        "command": "docker compose up -d",
+        "cwd": ".",
         "color": true
       }
     },
@@ -68,7 +68,23 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "docker compose down",
-        "cwd": "genesis",
+        "cwd": ".",
+        "color": true
+      }
+    },
+    "docker:up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up",
+        "cwd": ".",
+        "color": true
+      }
+    },
+    "docker:down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose down",
+        "cwd": ".",
         "color": true
       }
     },
@@ -108,7 +124,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "node dist/agent/agent/src/main.js --mode projection --projections account",
+        "command": "node dist/agent/src/main.js --mode projection --projections account",
         "color": true
       }
     },
@@ -125,6 +141,32 @@
       "options": {
         "jestConfig": "agent/jest.config.cts",
         "passWithNoTests": true
+      }
+    },
+    "build:docker:build": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "commands": [
+          "docker build -t exodus/agent:latest ./dist/agent"
+        ],
+        "cwd": ".",
+        "parallel": false
+      }
+    },
+    "build:docker:push": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build:docker:build"
+      ],
+      "options": {
+        "commands": [
+          "docker push exodus/agent:latest"
+        ],
+        "cwd": ".",
+        "parallel": false
       }
     }
   }
